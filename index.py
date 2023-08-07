@@ -172,13 +172,11 @@ def handle_callback_query(query):
                               message_id=message_id, reply_markup=keyboard)
 
     elif query.data == "near_you":
-          bot.send_message(chat_id, "Идет запуск сервера, пожалуйста, подождите!")
+          bot.send_message(chat_id, "🌀 Идет запуск сервера, пожалуйста, подождите! 🌀")
           SITE = template_seeker_select(SITE, TEMPLATES_JSON, loads, 0)
           SERVER_PROC = seekServer(LOG_FILE, port, SITE, subp, sleep, cl_quit, bot, chat_id)
           wait(bot, chat_id, cl_quit, SERVER_PROC)
           seeker_data_parser(INFO, loads, ip_address, RESULT, clear, bot, chat_id, cl_quit, SERVER_PROC)
-
-
 
 
 @bot.message_handler(func=lambda message: conversation_states.get(message.chat.id, {}).get("whois_input") == "waiting_for_user_input")
@@ -190,7 +188,7 @@ def handle_user_input(message):
 def help_command(message):
     bot.send_message(
         message.chat.id, "Available commands:\n/start - Start the bot\n/help - Show this help message")
-
+print("BOT RUN")
 bot.polling()
 # def start_bot_and_server():
 #     print("Bot is running!")

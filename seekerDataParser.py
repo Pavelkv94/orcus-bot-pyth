@@ -2,6 +2,7 @@
 import requests
 import traceback
 from json import decoder
+from seekerServer import stop_ngrok  # Import the stop_ngrok function
 
 def seeker_data_parser(INFO, loads, ip_address, RESULT, clear, bot, chat_id, cl_quit, SERVER_PROC):
     data_row = []
@@ -57,7 +58,7 @@ def seeker_data_parser(INFO, loads, ip_address, RESULT, clear, bot, chat_id, cl_
                 data_row.extend([var_continent, var_country,
                                 var_region, var_city, var_org, var_isp])
 
-                ip_info=(f'''[!] IP Information :
+                ip_info=(f'''[📡] IP Information :
 
 [+] Continent : {var_continent}
 [+] Country   : {var_country}
@@ -104,5 +105,6 @@ def seeker_data_parser(INFO, loads, ip_address, RESULT, clear, bot, chat_id, cl_
                 var_err = result_json['error']
                 print(f'[-] {var_err}\n')
     cl_quit(SERVER_PROC)
+    stop_ngrok()
     clear()
     return
