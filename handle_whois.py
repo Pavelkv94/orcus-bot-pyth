@@ -27,4 +27,4 @@ def handle_whois(bot, message, conversation_states):
     else:
         bot.send_message(chat_id, "👹 Invalid domain or IP resource.")
 
-    conversation_states[chat_id] = None
+    conversation_states[chat_id]["whois_input"] = None

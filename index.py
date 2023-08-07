@@ -19,7 +19,6 @@ conversation_states = {}
 def handle_start(message):
     start(bot, message)
 
-
 @bot.message_handler(commands=['menu'])
 def menu(message):
     chat_id = message.chat.id  # Get the chat ID from the message object
@@ -47,18 +46,24 @@ def handle_callback_query(query):
     elif query.data == "sites":
         tools_text = "Сайты"
 
-        keyboard = InlineKeyboardMarkup(row_width=3)
+        keyboard = InlineKeyboardMarkup(row_width=1)
         whois_button = InlineKeyboardButton(
             text="Whois", callback_data="whois")
+        seeker_button = InlineKeyboardButton(
+            text="Seeker", callback_data="seeker")
         keyboard.add(whois_button)
+        keyboard.add(seeker_button)
 
         bot.edit_message_text(tools_text, chat_id=chat_id,
                               message_id=message_id, reply_markup=keyboard)
 
     elif query.data == "whois":
         # Set conversation state to "waiting_for_user_input"
-        conversation_states[chat_id] = "waiting_for_user_input"
+        if chat_id not in conversation_states:
+            conversation_states[chat_id] = {}
 
+        conversation_states[chat_id]["whois_input"] = "waiting_for_user_input"
+        print(conversation_states)
         whois_description = (
             "Whois - это утилита или сервис, который предоставляет информацию о регистрации доменных имен. "
             "Он позволяет получить данные о владельце домена, контактные данные, даты регистрации и другие сведения.\n\n"
@@ -67,7 +72,26 @@ def handle_callback_query(query):
 
         bot.send_message(chat_id=chat_id, text=whois_description)
 
-@bot.message_handler(func=lambda message: conversation_states.get(message.chat.id) == "waiting_for_user_input")
+    elif query.data == "seeker":
+        if chat_id not in conversation_states:
+            conversation_states[chat_id] = {}
+
+        # Set conversation state to "waiting_for_user_input"
+        # conversation_states[chat_id] = "waiting_for_user_input"
+        conversation_states[chat_id]["seeker_input"] = "waiting_for_user_input"
+        print(conversation_states)
+
+        # whois_description = (
+        #     "Whois - это утилита или сервис, который предоставляет информацию о регистрации доменных имен. "
+        #     "Он позволяет получить данные о владельце домена, контактные данные, даты регистрации и другие сведения.\n\n"
+        #     "Чтобы воспользоваться данным сервисом введите доменное имя без протокола либо его IP адрес:"
+        # )
+
+        # bot.send_message(chat_id=chat_id, text=whois_description)
+
+
+
+@bot.message_handler(func=lambda message: conversation_states.get(message.chat.id, {}).get("whois_input") == "waiting_for_user_input")
 
 def handle_user_input(message):
     handle_whois(bot, message, conversation_states)
