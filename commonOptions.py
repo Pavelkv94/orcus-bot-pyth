@@ -1,10 +1,8 @@
-
-import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram import Bot
+
 
 #start
-def start(message):
+def start(bot, message):
 
     welcome_text = (
         "Привет! 👋 \n\n"
@@ -18,4 +16,17 @@ def start(message):
     )
 
     with open('./assets/welcome.jpg', 'rb') as photo_file:
-        Bot.send_photo(message.chat.id, photo_file, caption=welcome_text)
+        bot.send_photo(message.chat.id, photo_file, caption=welcome_text)
+
+#menu
+def show_menu(bot, chat_id):
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    show_tools_button = InlineKeyboardButton(
+        text="🛠 Показать инструменты 🛠", callback_data="show_tools")
+    keyboard.add(show_tools_button)
+
+    message_options = {
+        "reply_markup": keyboard,
+    }
+
+    bot.send_message(chat_id, "Выберите опцию:", **message_options)
