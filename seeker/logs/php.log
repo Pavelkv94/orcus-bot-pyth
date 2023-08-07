@@ -1,0 +1,4 @@
+[Mon Aug  7 18:24:05 2023] PHP 8.1.2-1ubuntu2.13 Development Server (http://0.0.0.0:4001) started
+[Mon Aug  7 18:24:08 2023] 127.0.0.1:38000 Accepted
+[Mon Aug  7 18:24:08 2023] 127.0.0.1:38000 [200]: GET /index.html
+[Mon Aug  7 18:24:08 2023] 127.0.0.1:38000 Closing
