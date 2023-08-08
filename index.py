@@ -9,6 +9,7 @@ from handle_whois import handle_whois  # Import the handle_whois function
 from seekerServer import seekServer  # Import the seekServer function
 from seekerSelect import template_seeker_select  # Import the template_seeker_select function
 from seekerDataParser import seeker_data_parser  # Import the seeker_data_parser function
+from handle_sms_spammer import handle_sms_spammer  # Import the seeker_data_parser function
 
 #!====================================
 import sys
@@ -101,14 +102,17 @@ def handle_callback_query(query):
 
         keyboard = InlineKeyboardMarkup(row_width=1)
         sites_button = InlineKeyboardButton(
-            text="Сайты", callback_data="sites")
+            text="Сканирование и разведка", callback_data="sites")
+        attacks_button = InlineKeyboardButton(
+            text="Атаки", callback_data="attacks")
         keyboard.add(sites_button)
+        keyboard.add(attacks_button)
 
         bot.edit_message_text(tools_text, chat_id=chat_id,
                               message_id=message_id, reply_markup=keyboard)
 
     elif query.data == "sites":
-        tools_text = "Сайты"
+        tools_text = "Сканирование и разведка"
 
         keyboard = InlineKeyboardMarkup(row_width=1)
         whois_button = InlineKeyboardButton(
@@ -120,6 +124,30 @@ def handle_callback_query(query):
 
         bot.edit_message_text(tools_text, chat_id=chat_id,
                               message_id=message_id, reply_markup=keyboard)
+    elif query.data == "attacks":
+        tools_text = "Атаки"
+
+        keyboard = InlineKeyboardMarkup(row_width=1)
+        sms_spammer_button = InlineKeyboardButton(
+            text="SMS Spammer", callback_data="sms_spammer")
+        
+        keyboard.add(sms_spammer_button)
+
+        bot.edit_message_text(tools_text, chat_id=chat_id,
+                              message_id=message_id, reply_markup=keyboard)
+
+    elif query.data == "sms_spammer":
+        if chat_id not in conversation_states:
+            conversation_states[chat_id] = {}
+
+        conversation_states[chat_id]["sms_spammer_input"] = "waiting_for_user_input"
+        sms_spammer_description = (
+            "📄 SMS Spammer - это утилита, которая отправлять неограниченное количество смс на указанный номер телефона. "
+            
+            "\n\nЧтобы воспользоваться данным сервисом введите номер телефона:"
+        )
+
+        bot.send_message(chat_id=chat_id, text=sms_spammer_description)
 
     elif query.data == "whois":
         # Set conversation state to "waiting_for_user_input"
@@ -183,6 +211,9 @@ def handle_callback_query(query):
 def handle_user_input(message):
     handle_whois(bot, message, conversation_states)
 
+@bot.message_handler(func=lambda message: conversation_states.get(message.chat.id, {}).get("sms_spammer_input") == "waiting_for_user_input")
+def handle_user_input(message):
+    handle_sms_spammer(bot, message, conversation_states)
 
 @bot.message_handler(commands=['help'])
 def help_command(message):

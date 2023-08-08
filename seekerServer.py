@@ -3,7 +3,7 @@ import subprocess
 import threading
 import time
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from test import get_ngrok_http_address  # Import the seeker_data_parser function
+from get_ngrok_http import get_ngrok_http_address  # Import the seeker_data_parser function
 
 
 def run_ngrok(chat_id, bot):

@@ -105,6 +105,6 @@ def seeker_data_parser(INFO, loads, ip_address, RESULT, clear, bot, chat_id, cl_
                 var_err = result_json['error']
                 print(f'[-] {var_err}\n')
     cl_quit(SERVER_PROC)
-    # stop_ngrok()
+    stop_ngrok()
     clear()
     return
