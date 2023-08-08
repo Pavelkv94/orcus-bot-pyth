@@ -24,7 +24,7 @@ def stop_ngrok():
         subprocess.run(["pkill", "ngrok"], check=True)
         print("Ngrok has been stopped.")
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred with ngrok stopped: {str(e)}")
 
 
 def seekServer(LOG_FILE, port, SITE, subp, sleep, cl_quit, bot, chat_id):
